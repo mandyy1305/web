@@ -1,0 +1,200 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+prgm4.html
+<!DOCTYPE html>
+//<link rel="manifest" href="/Users/amithpradhaan/Documents/ABILITY ENHANCEMENT
+(WEB TECHNOLOGY)/Pgrm4/manifest.json">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToDo App</title>
+<link rel="stylesheet" href="pgrm4.css">
+</head>
+<body>
+<header>
+<h1>ToDo App</h1>
+</header>
+<main>
+<form id="todo-form">
+<input type="text" id="todo-input" placeholder="Enter a task">
+<button type="submit">Add</button>
+</form>
+<ul id="todo-list"></ul>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
+prgm4.css
+body {
+font-family: Arial, sans-serif;
+}
+header {
+background-color: #f2f2f2;
+padding: 20px;
+text-align: center;
+}
+h1 {
+margin: 0;
+}
+form {
+display: flex;
+margin-bottom: 20px;
+}
+input[type="text"] {
+flex: 1;
+padding: 10px;
+}
+button {
+padding: 10px 20px;
+background-color: #4CAF50;
+color: #fff;
+border: none;
+cursor: pointer;
+}
+ul {
+list-style-type: none;
+padding: 0;
+}
+li {
+display: flex;
+align-items: center;
+padding: 10px;
+border-bottom: 1px solid #ccc;
+}
+li:last-child {
+border-bottom: none;
+}
+.completed {
+text-decoration: line-through;
+}
+app.js
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker
+.register('service-worker.js')
+.then(function() {
+console.log('Service Worker Registered');
+});
+}
+// DOM elements
+const todoForm = document.getElementById('todo-form');
+const todoInput = document.getElementById('todo-input');
+const todoList = document.getElementById('todo-list');
+// Store tasks in an array
+let tasks = [];
+// Render tasks in the list
+function renderTasks() {
+todoList.innerHTML = '';
+tasks.forEach(function(task) {
+const li = document.createElement('li');
+li.textContent = task.title;
+if (task.completed) {
+li.classList.add('completed');
+}
+li.addEventListener('click', function() {
+task.completed = !task.completed;
+renderTasks();
+});
+todoList.appendChild(li);
+});
+}
+// Handle form submission
+todoForm.addEventListener('submit', function(event) {
+event.preventDefault();
+const taskTitle = todoInput.value.trim();
+if (taskTitle !== '') {
+const task = {
+title: taskTitle,
+completed: false
+};
+tasks.push(task);
+renderTasks();
+todoInput.value = '';
+}
+});
+service-worker.js
+// service-worker.js
+const CACHE_NAME = 'my-pwa-cache-v1';
+const urlsToCache = [
+'/',
+'pgrm4.html',
+'prgm4.css',
+'app.js'
+];
+self.addEventListener('install', (event) => {
+event.waitUntil(
+caches.open(CACHE_NAME)
+.then((cache) => cache.addAll(urlsToCache))
+);
+});
+self.addEventListener('fetch', (event) => {
+event.respondWith(
+caches.match(event.request)
+.then((response) => response || fetch(event.request))
+);
+});
